@@ -38,9 +38,9 @@ def writeOutput(sigFile, signature):
     s.close()
 
 def doHash(message):
-    message = message.encode('utf-8')
     h = SHA256.new()
     h.update(message)
+    #print("Hash: %s" % h.hexdigest())
     return h
 
 def sign(h, N, d):
@@ -53,6 +53,7 @@ def main():
     message = readInput(args.msgFile)
     h = doHash(message)
     signature = sign(h, contents[1], contents[2])
+    #print("Writing: \n%s" % signature)
     writeOutput(args.sigFile, signature)
 
 if __name__ == "__main__":

@@ -77,18 +77,18 @@ def writeFiles(args, keys):
 
     #Read CA key
     if args.caFile is not None:
-        CA = open(args.caFile, "rb")
+        CA = open(args.caFile, "r")
         caNumBits = CA.readline()
         caN = CA.readline()
         caD = CA.readline()
         CA.close()
     else:
         args.caFile = args.secretFile
-        pub = open(args.secretFile, "r")
-        caNumBits = pub.readline()
-        caN = pub.readline()
-        caD = pub.readline()
-        pub.close()
+        priv = open(args.secretFile, "r")
+        caNumBits = priv.readline()
+        caN = priv.readline()
+        caD = priv.readline()
+        priv.close()
     dest = args.publicFile + "-casig"
 
     command = "python2.7 rsa-sign.py -k " + args.caFile + " -m " + args.publicFile + " -s " + dest
