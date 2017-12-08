@@ -46,7 +46,6 @@ def openFiles(args):
     return (keyTuple, msg, sig)
 
 def hash(message):
-    message = message.encode('utf-8')
     h = SHA256.new()
     h.update(message)
     return h
