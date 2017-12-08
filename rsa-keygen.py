@@ -3,6 +3,7 @@ import sys
 import argparse
 from Crypto.Util import number
 import fractions
+import subprocess
 
 def getFlags():
     #parse command line args
@@ -73,6 +74,26 @@ def writeFiles(args, keys):
     #close files
     pub.close()
     priv.close()
+
+    #Read CA key
+    if args.caFile is not None:
+        CA = open(args.caFile, "rb")
+        caNumBits = CA.readline()
+        caN = CA.readline()
+        caD = CA.readline()
+        CA.close()
+    else:
+        args.caFile = args.secretFile
+        pub = open(args.secretFile, "r")
+        caNumBits = pub.readline()
+        caN = pub.readline()
+        caD = pub.readline()
+        pub.close()
+    dest = args.secretFile + "-casig"
+
+    command = "python rsa-sign.py -k " + args.caFile + " -m " + args.publicFile + " -s " + dest
+    subprocess.call([command], shell=True)
+
 
 def main():
     args = getFlags()
