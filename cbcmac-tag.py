@@ -65,14 +65,18 @@ def blockify(plaintext):
         x += 1
     return blocks
 
+def writeFile(oFile, ciphertext):
+    fd = open(oFile, "wb")
+    fd.write(ciphertext)
+    fd.close()
+
 def main():
     args = getFlags()
     results = getInfo(args)
     paddedmsg = pad(results[1])
     blocks = blockify(paddedmsg)
     ciphertext = xor(blocks, results[0])
-    print("Ciphertext:\n%s" % ciphertext)
-
+    writeFile(args.tagFile, ciphertext)
 
 if __name__ == "__main__":
     main()
