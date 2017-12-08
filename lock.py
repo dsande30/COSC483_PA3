@@ -10,8 +10,13 @@ def getFlags():
     args = parser.parse_args()
     return args
 
+def verifyUnlocker(args):
+    print("Pub: %s" % args.pubKeyFile)
+    print("Priv: %s" % args.privKeyFile)
+
 def main():
     args = getFlags()
+    verifyUnlocker(args)
 
 if __name__ == "__main__":
     main()
