@@ -10,6 +10,31 @@ def getFlags():
     args = parser.parse_args()
     return args
 
+def openFiles(args):
+    #keyFile
+    print("Key file: %s" % args.keyFile)
+    fd = open(args.keyFile, "r")
+    for line in fd:
+        print("%s" % line.strip())
+    print("\n")
+    fd.close()
+
+    #msgFile
+    print("Message File: %s" % args.msgFile)
+    fd = open(args.msgFile, "r")
+    for line in fd:
+        print("%s" % line.strip())
+    print("\n")
+    fd.close()
+
+    #sigFile
+    print("Signature File: %s" % args.sigFile)
+    fd = open(args.sigFile, "r")
+    for line in fd:
+        print("%s" % line.strip())
+    print("\n")
+    fd.close()
+
 def readKey(keyFile):
     key = open(keyFile, 'rb')
     numBits = key.readline()
@@ -23,20 +48,14 @@ def readKey(keyFile):
 
 def readInput(inputFile):
     i = open(inputFile, 'r')
-    m = ""
-    while True:
-        string = i.readline()
-        if string == "":
-            break
-        m += string
+    m = i.readline()
     i.close()
     return m
 
-def writeOutput(outputFile, signature):
-    o = open(outputFile, 'wb')
-    #o.write("".join(paddedM))
-    o.write(str(signature))
-    o.close()
+def writeOutput(sigFile, signature):
+    s = open(sigFile, 'wb')
+    s.write(str(signature))
+    s.close()
 
 def doHash(message):
     h = SHA256.new()
@@ -49,12 +68,12 @@ def sign(h, N, d):
 
 def main():
     args = getFlags()
+    openFiles(args)
     contents = readKey(args.keyFile)
     message = readInput(args.msgFile)
     h = doHash(message)
     signature = sign(h, contents[1], contents[2])
     writeOutput(args.sigFile, signature)
-
 
 if __name__ == "__main__":
     main()
