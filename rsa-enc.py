@@ -62,17 +62,24 @@ def pad(message, r):
         test = 1
         rand = random.getrandbits(r)
         rand = str(rand)
+        length = len(rand)
         randlength = 0
-        for i in range(0, len(rand)):
-            if rand[i] == '0':
-                test = 0
-            randlength += int(rand[i]).bit_length()
+        list = []
+        for x in rand:
+            list.append(x)
+        for i in range(0, len(list)):
+            if list[i] == "0":
+                string = str(random.getrandbits(30))
+                if string[0:1] != 0:
+                    list[i] = string[0:1]
+                    #print("Replacing with %s" % list[i])
+            #randlength += int(x).bit_length()
+        rand = int(''.join(list))
+        randlength = rand.bit_length()
         if randlength != r:
             test = 0
-    print("Did we escape?")
-    return
 
-    M += rand + str(ord(b'\x00'))
+    M += str(rand) + str(ord(b'\x00'))
     message = message.strip()
     messageLen = 0
 
@@ -109,9 +116,9 @@ def main():
     contents = readKey(args.keyFile)
     message = args.inputFile
     paddedM = pad(message, int(contents[0]) / 2)
-    return
     c = Encrypt(paddedM, contents)
-    return c
+    print(c)
+    return
     #writeOutput(args.outputFile, c)
 
 if __name__ == "__main__":
