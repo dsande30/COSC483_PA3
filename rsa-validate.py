@@ -51,7 +51,7 @@ def hash(message):
     return h
 
 def verify(h, sig, N, e):
-    result = pow(sig, e)
+    result = pow(sig, e, N)
     if result == (int(h.hexdigest(), 16) % N):
         return 1
     else:
