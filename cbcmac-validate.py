@@ -1,4 +1,7 @@
 import argparse
+from Crypto.Cipher import AES
+import binascii
+import difflib
 
 def getFlags():
     #parse command line args
@@ -10,20 +13,31 @@ def getFlags():
     return args
 
 def readTag(tagFile):
-    t = open(tagFile, 'wb')
-    tag = t.readline()
+    t = open(tagFile, 'rb')
+    tag = ""
+    while True:
+        string = t.readline()
+        if string == "":
+            break
+        tag += string
     t.close()
     return tag
 
 def readKey(keyFile):
     key = open(keyFile, 'rb')
-    validKey = key.readline()
+    validKey = key.readline().strip()
     key.close()
     return validKey
 
 def readInput(msgFile):
     i = open(msgFile, 'r')
-    m = i.readline()
+    m = ""
+    while True:
+        string = i.readline()
+        if string == "":
+            break
+        m += string
+    m = m.strip()
     i.close()
     return m
 
