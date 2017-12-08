@@ -39,9 +39,9 @@ def pad(message):
 def xor(blocks, key32):
     message = []
     cipher = AES.new(key32, AES.MODE_ECB)
-    priorBlock = cipher.encrypt(blocks[0])
+    priorBlock = blocks[0]
     message = ""
-    for currentBlock in blocks[0:]:
+    for currentBlock in blocks[1:]:
         ciphertext = cipher.encrypt(str(priorBlock))
         text = ""
         text += "".join(chr(ord(a)^ord(b)) for a,b in zip(currentBlock, ciphertext))
@@ -65,14 +65,18 @@ def blockify(plaintext):
         x += 1
     return blocks
 
+def writeFile(oFile, ciphertext):
+    fd = open(oFile, "wb")
+    fd.write(ciphertext)
+    fd.close()
+
 def main():
     args = getFlags()
     results = getInfo(args)
     paddedmsg = pad(results[1])
     blocks = blockify(paddedmsg)
     ciphertext = xor(blocks, results[0])
-    print("Ciphertext:\n%s" % ciphertext)
-
+    writeFile(args.tagFile, ciphertext)
 
 if __name__ == "__main__":
     main()
