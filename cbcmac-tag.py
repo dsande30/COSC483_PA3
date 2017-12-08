@@ -39,9 +39,9 @@ def pad(message):
 def xor(blocks, key32):
     message = []
     cipher = AES.new(key32, AES.MODE_ECB)
-    priorBlock = cipher.encrypt(blocks[0])
+    priorBlock = blocks[0]
     message = ""
-    for currentBlock in blocks[0:]:
+    for currentBlock in blocks[1:]:
         ciphertext = cipher.encrypt(str(priorBlock))
         text = ""
         text += "".join(chr(ord(a)^ord(b)) for a,b in zip(currentBlock, ciphertext))
