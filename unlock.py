@@ -28,15 +28,15 @@ def main():
     if lockIntegrity != "True":
         print("Locking Party's Public Key Was Unverified")
         exit()
+    else:
+        print("Verified dat lock integrity")
     symIntegrity = symVerify(args)
     if symIntegrity != "True":
         print("Symmetric Key Manifest Was Unverified")
         exit()
+    else:
+        print("Verified sym key manifesto speghettio")
 
 
 if __name__ == "__main__":
     main()
-
-
-command = "python2.7 rsa-sign.py -k " + args.caFile + " -m " + args.publicFile + " -s " + dest
-subprocess.call([command], shell=True)
