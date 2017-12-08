@@ -13,17 +13,25 @@ def getFlags():
 
 def pubVerify(args):
     dest = args.pubKeyFile + "-casig"
-    command = "python2.7 rsa-validate -k " + args.valFile + " -m " + args.publicFile + " -s " + dest
-    returnVal = subprocess.call([command], shell=True)
-    return returnVal
+    command = "python2.7 rsa-validate.py -k " + args.valFile + " -m " + args.pubKeyFile + " -s " + dest
+    returnVal = subprocess.check_output([command], shell=True)
+    return returnVal.strip()
+
+def symVerify(args):
+    command = "python2.7 rsa-validate.py -k " + args.pubKeyFile + " -m  symManifest -s symManifest-casig"
+    returnVal = subprocess.check_output([command], shell=True)
+    return returnVal.strip()
 
 def main():
     args = getFlags()
     lockIntegrity = pubVerify(args)
-    if lockIntegrity != 0:
-        print("Locking Party's Public Key Is Invalid")
+    if lockIntegrity != "True":
+        print("Locking Party's Public Key Was Unverified")
         exit()
-
+    symIntegrity = symVerify(args)
+    if symIntegrity != "True":
+        print("Symmetric Key Manifest Was Unverified")
+        exit()
 
 
 if __name__ == "__main__":
