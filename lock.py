@@ -21,26 +21,35 @@ def verifyUnlocker(args):
         return
     else:
         print("Unverified unlocker")
-        return
+        exit()
 
 def randAESKey():
     val = random.getrandbits(128)
     val = str(val)
     val = val[0:16]
-    print("Key is %s" % val)
     return int(val)
 
 def rsaEnc(args, key):
     command = "python2.7 rsa-enc.py -k " + args.pubKeyFile + " -i " + str(key)
     result = subprocess.check_output([command], shell=True)
-    print("Result:", result.strip())
+    return result.strip()
 
+def printManifest(encryptedKey):
+    fd = open("symManifest", "w")
+    fd.write(encryptedKey)
+    fd.close()
+
+def signManifest(lock_priv):
+    command = "python2.7 rsa-sign.py -k " + lock_priv + " -m symManifest -s symManifest-casig"
+    subprocess.call([command], shell=True)
 
 def main():
     args = getFlags()
     check = verifyUnlocker(args)
     key = randAESKey()
     encryptedKey = rsaEnc(args, key)
+    printManifest(encryptedKey)
+    signManifest(args.privKeyFile)
 
 if __name__ == "__main__":
     main()
