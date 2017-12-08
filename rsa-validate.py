@@ -52,6 +52,7 @@ def hash(message):
 
 def verify(h, sig, N, e):
     result = pow(sig, e, N)
+    #print("Validating %s\n\n%s" % (result, (int(h.hexdigest(), 16) % N)))
     if result == (int(h.hexdigest(), 16) % N):
         return 1
     else:

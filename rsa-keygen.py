@@ -89,7 +89,7 @@ def writeFiles(args, keys):
         caN = pub.readline()
         caD = pub.readline()
         pub.close()
-    dest = args.secretFile + "-casig"
+    dest = args.publicFile + "-casig"
 
     command = "python rsa-sign.py -k " + args.caFile + " -m " + args.publicFile + " -s " + dest
     subprocess.call([command], shell=True)
