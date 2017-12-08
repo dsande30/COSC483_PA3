@@ -1,4 +1,5 @@
 import argparse
+from Crypto.Random import random
 import subprocess
 
 def getFlags():
@@ -22,9 +23,24 @@ def verifyUnlocker(args):
         print("Unverified unlocker")
         return
 
+def randAESKey():
+    val = random.getrandbits(128)
+    val = str(val)
+    val = val[0:16]
+    print("Key is %s" % val)
+    return int(val)
+
+def rsaEnc(args, key):
+    command = "python2.7 rsa-enc.py -k " + args.pubKeyFile + " -i " + str(key)
+    result = subprocess.check_output([command], shell=True)
+    print("Result:", result.strip())
+
+
 def main():
     args = getFlags()
     check = verifyUnlocker(args)
+    key = randAESKey()
+    encryptedKey = rsaEnc(args, key)
 
 if __name__ == "__main__":
     main()
