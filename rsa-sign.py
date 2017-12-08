@@ -10,31 +10,6 @@ def getFlags():
     args = parser.parse_args()
     return args
 
-def openFiles(args):
-    #keyFile
-    print("Key file: %s" % args.keyFile)
-    fd = open(args.keyFile, "r")
-    for line in fd:
-        print("%s" % line.strip())
-    print("\n")
-    fd.close()
-
-    #msgFile
-    print("Message File: %s" % args.msgFile)
-    fd = open(args.msgFile, "r")
-    for line in fd:
-        print("%s" % line.strip())
-    print("\n")
-    fd.close()
-
-    #sigFile
-    print("Signature File: %s" % args.sigFile)
-    fd = open(args.sigFile, "r")
-    for line in fd:
-        print("%s" % line.strip())
-    print("\n")
-    fd.close()
-
 def readKey(keyFile):
     key = open(keyFile, 'rb')
     numBits = key.readline()
@@ -48,7 +23,12 @@ def readKey(keyFile):
 
 def readInput(inputFile):
     i = open(inputFile, 'r')
-    m = i.readline()
+    m = ""
+    while True:
+        string = i.readline()
+        if string == "":
+            break
+        m += string
     i.close()
     return m
 
@@ -68,7 +48,6 @@ def sign(h, N, d):
 
 def main():
     args = getFlags()
-    openFiles(args)
     contents = readKey(args.keyFile)
     message = readInput(args.msgFile)
     h = doHash(message)
