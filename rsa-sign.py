@@ -38,6 +38,7 @@ def writeOutput(sigFile, signature):
     s.close()
 
 def doHash(message):
+    message = message.encode('utf-8')
     h = SHA256.new()
     h.update(message)
     return h
