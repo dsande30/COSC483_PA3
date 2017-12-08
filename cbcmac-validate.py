@@ -97,8 +97,10 @@ def main():
     validity = verify(key, message, tag)
     if validity == 1:
         print("True")
+        return 1
     else:
         print("False")
+        return 0
 
 
 if __name__ == "__main__":
