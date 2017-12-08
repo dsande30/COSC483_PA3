@@ -1,4 +1,5 @@
 import argparse
+import subprocess
 
 def getFlags():
     #parse command line args
@@ -11,12 +12,19 @@ def getFlags():
     return args
 
 def verifyUnlocker(args):
-    print("Pub: %s" % args.pubKeyFile)
-    print("Priv: %s" % args.privKeyFile)
+    command = "python2.7 rsa-validate.py -k " + args.valFile + " -m " + args.pubKeyFile + " -s " + args.pubKeyFile + "-casig"
+    #print("Command: %s" % command)
+    result = subprocess.check_output([command], shell=True)
+    if(result.strip() == "True"):
+        print("Verified")
+        return
+    else:
+        print("Unverified unlocker")
+        return
 
 def main():
     args = getFlags()
-    verifyUnlocker(args)
+    check = verifyUnlocker(args)
 
 if __name__ == "__main__":
     main()
