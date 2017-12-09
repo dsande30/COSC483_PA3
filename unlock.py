@@ -1,5 +1,8 @@
 import argparse
 import subprocess
+import os
+import sys
+from Crypto.Random import random
 
 def getFlags():
     #parse command line args
@@ -22,8 +25,11 @@ def symVerify(args):
     returnVal = subprocess.check_output([command], shell=True)
     return returnVal.strip()
 
-def encVerify(args):
-
+def encVerify(key, file, currentdir):
+    file = file[:-4]
+    command = "python2.7 " + currentdir + "/cbcmac-validate-2.py -k " + str(key) + " -m " + file + " -t " + file + "-tag"
+    result = subprocess.check_output([command], shell=True)
+    return result.strip()
 
 def decDir(directory, key):
     currentdir = os.getcwd()
@@ -33,19 +39,31 @@ def decDir(directory, key):
     for i in range(0, len(newlist)):
         if newlist[i] == ' ':
             newlist[i] = "\ "
-    current dir = ''.join(newlist)
+    currentdir = ''.join(newlist)
 
     for root, dirs, files in os.walk(directory):
         os.chdir(directory)
+        #tags
         for file in files:
-            decFile(file, key, currentdir)
+            if file[-4:] == "-tag":
+                encIntegrity = encVerify(key, file, currentdir)
+                if encIntegrity != "True":
+                    sys.exit("Bad file detected: %s" % file)
+                os.remove(file)
+
+    os.chdir("..")
+    for root, dirs, files in os.walk(directory):
+        #for files
+        os.chdir(directory)
+        for file in files:
+            decFile(file.strip(), key, currentdir)
 
 def decFile(file, key, currentdir):
-    command = "python 2.7 " + currentdir + "/cbc-dec.py -k " + str(key) + " -i " + file + " -o " + file
+    command = "python2.7 " + currentdir + "/cbc-dec.py -k " + str(key) + " -i " + file + " -o " + file
     subprocess.call([command], shell=True)
 
 def decManifest(args, key):
-    command = "python2.7 rsa-dec.py -k " + args.pubKeyFile + " -i " + str(key)
+    command = "python2.7 rsa-dec.py -k " + args.privKeyFile + " -i " + str(key)
     result = subprocess.check_output([command], shell=True)
     return result.strip()
 
@@ -62,13 +80,13 @@ def main():
         print("Locking Party's Public Key Was Unverified")
         exit()
     else:
-        print("Verified dat lock integrity")
+        #print("Verified Lock Key Integrity")
     symIntegrity = symVerify(args)
     if symIntegrity != "True":
         print("Symmetric Key Manifest Was Unverified")
         exit()
     else:
-        print("Verified sym key manifesto speghettio")
+        #print("Verified Symmetric Key Manifest")
     key = readManifest()
     aesKey = decManifest(args, key)
     decDir(args.directory, aesKey)

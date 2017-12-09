@@ -57,6 +57,7 @@ def pad(message, r):
     M += str(ord(b'\x00')) + str(ord(b'\x02'))
     test = 0
 
+
     #Gets r random bits for padding
     while test == 0:
         test = 1
@@ -82,13 +83,6 @@ def pad(message, r):
     M += str(rand) + str(ord(b'\x00'))
     message = message.strip()
     messageLen = 0
-
-    for i in range(0, len(message)):
-        messageLen += int(message[i]).bit_length()
-        if message[i] == "0":
-            messageLen += 1
-    #Should pad 0's if the message isn't the right amount of numBits
-    #message = message + "0"*((r - 24) - messageLen)
 
     M += message
 
