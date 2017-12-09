@@ -18,11 +18,10 @@ def verifyUnlocker(args):
     #print("Command: %s" % command)
     result = subprocess.check_output([command], shell=True)
     if(result.strip() == "True"):
-        print("Verified")
+        #print("Verified")
         return
     else:
-        print("Unverified unlocker")
-        exit()
+        sys.exit("Unverified unlocker")
 
 def randAESKey():
     val = random.getrandbits(128)
