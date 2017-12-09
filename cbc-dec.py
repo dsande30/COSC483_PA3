@@ -27,54 +27,32 @@ def main(argv):
     ivfile = ''
 
     #Reads flags from command line
-    try:
-        opts, args = getopt.getopt(argv, "k:i:o:v:", ["kfile=", "ifile=", "ofile=", "vfile="])
-    except getopt.GetoptError:
-        print('cbc-dec.py -k <keyfile> -i <inputfile> -o <outputfile> -v <ivfile>')
-        sys.exit(2)
-    for opt, arg in opts:
-        if opt == '-h':
-            print("test.py -i <inputfile> -o <outputfile>")
-            sys.exit()
-        elif opt in ("-k", "--kfile"):
-            keyfile = arg
-        elif opt in ("-i", "--ifile"):
-            inputfile = arg
-        elif opt in ("-o", "--ofile"):
-            outputfile = arg
-        elif opt in ("-v", "--vfile"):
-            ivfile = arg
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-k", dest = 'keyfile', help="Enter key file", required = True)
+    parser.add_argument("-i", dest = 'inputfile', help="Enter input file", required = True)
+    parser.add_argument("-o", dest = 'outputfile', help= "Enter ouput file", required=True)
+    args = parser.parse_args()
 
     #Opens Files
-    k = open(keyfile, 'rb')
     i = open(inputfile, 'rb')
-    o = open(outputfile, 'wb')
 
 
-    s = []  
+    s = []
     key = ""
     ciphertext = ""
 
     #Takes the IV from the Encryption Part
+    key = args.keyfile
     IV = i.readline()
 
-    #Reads in from the input file, key file, and IV file
-    try:
-        byte = k.read(1)
-        byte2 = i.read(1)
-        if ivfile != "":
-            byte3 = v.read(1)
-        while byte != "":
-            key += str(byte)
-            s += str(byte)
-            byte = k.read(1)
-        while byte2 != "":
-            ciphertext += str(byte2)
-            byte2 = i.read(1)
-    
-    finally:
-        k.close()
-        i.close()
+    while True:
+        string = i.readline()
+        if string == "":
+            break
+        ciphertext += string
+
+    i.close()
+    os.remove(args.inputfile)
 
 
     blocks = []
@@ -96,6 +74,7 @@ def main(argv):
     #Calls the XOR function to get the original plaintext
     plaintext = xor(blocks, IV, key32)
 
+    o = open(args.outputfile, 'wb')
     o.write(repr("".join(plaintext)))
     o.close()
 

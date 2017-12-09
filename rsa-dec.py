@@ -9,7 +9,6 @@ def getFlags():
     parser = argparse.ArgumentParser()
     parser.add_argument("-k", dest = 'keyFile', help="Enter Key file", required = True)
     parser.add_argument("-i", dest = 'inputFile', help="Enter input file", required = True)
-    parser.add_argument("-o", dest = 'outputFile', help= "Enter output file", required=True)
     args = parser.parse_args()
 
     return args
@@ -61,11 +60,11 @@ def unpad(m):
 def main():
     args = getFlags()
     key = readKey(args.keyFile)
-    c = readInput(args.inputFile)
-    m = Dec(key, c)
+    message = args.inputFile
+    m = Dec(key, message)
     m = unpad(str(m))
-    m = int(m)
-    writeOutput(args.outputFile, m)
+    print(m)
+    return
 
 if __name__ == "__main__":
 	main()
