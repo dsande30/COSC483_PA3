@@ -57,16 +57,17 @@ def encryptDir(directory, key):
 
     for root, dirs, files in os.walk(directory):
         os.chdir(directory)
-        print("Changing directories to %s" % os.getcwd())
         for file in files:
             encryptFile(file, key, currentdir)
+            tagFile(file, key, currentdir)
 
 def encryptFile(file, key, currentdir):
-    #command = "cd " + currentdir
-    #subprocess.call([command], shell=True)
     command = "python2.7 " + currentdir + "/cbc-enc.py -k " + str(key) + " -i " + file + " -o " + file
     subprocess.call([command], shell=True)
 
+def tagFile(file, key, currentdir):
+    command = "python2.7 " + currentdir + "/cbcmac-tag_2.py -k " + str(key) + " -m " + file + " -t " + file + "-tag"
+    subprocess.call([command], shell=True)
 
 def main():
     args = getFlags()
