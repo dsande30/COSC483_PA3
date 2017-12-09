@@ -102,11 +102,12 @@ def main(argv):
                 test = 1
 
     #Gets correct key and Then XORs text
-    key32 = "".join([ ' ' if x >= len(s) else s[x] for x in range(32)])
+    #key32 = "".join([ ' ' if x >= len(s) else s[x] for x in range(32)])
+    key32 = key.strip()
 
     #Gets rid of any newline chars in the IV and unhexlifies it if
     #read in from a file
-    IV = IV.rstrip("\n\r")
+    IV = IV.rstrip("\r") #FIXME \n
     if ivfile != "":
         IV = binascii.unhexlify(IV)
 

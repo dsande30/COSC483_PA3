@@ -38,8 +38,8 @@ def Dec(key, c):
     d = int(key[2])
     N = int(key[1])
     #print "C: %d" % c
-    #print "N: %d" % N
-    #print "d: %d" % d
+    #print("N: %d" % N)
+    #print("d: %d" % d)
     m = pow(c, d, N)
     return m
 
@@ -54,7 +54,6 @@ def unpad(m):
     #print m
     r, M = m.split("0", 1)
     M = M.strip()
-    #print M
     return M
 
 def main():
@@ -63,7 +62,7 @@ def main():
     message = args.inputFile
     m = Dec(key, message)
     m = unpad(str(m))
-    print(m)
+    print(str(m))
     return
 
 if __name__ == "__main__":
