@@ -22,6 +22,39 @@ def symVerify(args):
     returnVal = subprocess.check_output([command], shell=True)
     return returnVal.strip()
 
+def encVerify(args):
+
+
+def decDir(directory, key):
+    currentdir = os.getcwd()
+    newlist = []
+    for letter in currentdir:
+        newlist.append(letter)
+    for i in range(0, len(newlist)):
+        if newlist[i] == ' ':
+            newlist[i] = "\ "
+    current dir = ''.join(newlist)
+
+    for root, dirs, files in os.walk(directory):
+        os.chdir(directory)
+        for file in files:
+            decFile(file, key, currentdir)
+
+def decFile(file, key, currentdir):
+    command = "python 2.7 " + currentdir + "/cbc-dec.py -k " + str(key) + " -i " + file + " -o " + file
+    subprocess.call([command], shell=True)
+
+def decManifest(args, key):
+    command = "python2.7 rsa-dec.py -k " + args.pubKeyFile + " -i " + str(key)
+    result = subprocess.check_output([command], shell=True)
+    return result.strip()
+
+def readManifest():
+    fd = open("symManifest", "rb")
+    key = fd.readline()
+    fd.close()
+    return key.strip()
+
 def main():
     args = getFlags()
     lockIntegrity = pubVerify(args)
@@ -36,6 +69,10 @@ def main():
         exit()
     else:
         print("Verified sym key manifesto speghettio")
+    key = readManifest()
+    aesKey = decManifest(args, key)
+    decDir(args.directory, aesKey)
+
 
 
 if __name__ == "__main__":
