@@ -54,8 +54,7 @@ def main(argv):
     IV = ""
 
     #reads in key
-    key += keyfile
-    print("Key: %s" % key)
+    key = args.keyfile
 
     #read in input
     while True:
@@ -63,7 +62,6 @@ def main(argv):
         if string == "":
             break
         plaintext += string
-    print("Plaintext: %s" % plaintext)
 
     i.close()
     os.remove(args.inputfile)
