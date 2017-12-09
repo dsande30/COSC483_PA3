@@ -1,3 +1,4 @@
+import os
 import argparse
 from Crypto.Random import random
 import subprocess
@@ -43,6 +44,30 @@ def signManifest(lock_priv):
     command = "python2.7 rsa-sign.py -k " + lock_priv + " -m symManifest -s symManifest-casig"
     subprocess.call([command], shell=True)
 
+def encryptDir(directory, key):
+    currentdir = os.getcwd()
+    newlist = []
+    for letter in currentdir:
+        newlist.append(letter)
+    for i in range(0, len(newlist)):
+        if newlist[i] == ' ':
+            newlist[i] = "\ "
+    currentdir = ''.join(newlist)
+
+
+    for root, dirs, files in os.walk(directory):
+        os.chdir(directory)
+        print("Changing directories to %s" % os.getcwd())
+        for file in files:
+            encryptFile(file, key, currentdir)
+
+def encryptFile(file, key, currentdir):
+    #command = "cd " + currentdir
+    #subprocess.call([command], shell=True)
+    command = "python2.7 " + currentdir + "/cbc-enc.py -k " + str(key) + " -i " + file + " -o " + file
+    subprocess.call([command], shell=True)
+
+
 def main():
     args = getFlags()
     check = verifyUnlocker(args)
@@ -50,6 +75,7 @@ def main():
     encryptedKey = rsaEnc(args, key)
     printManifest(encryptedKey)
     signManifest(args.privKeyFile)
+    encryptDir(args.directory, key)
 
 if __name__ == "__main__":
     main()
