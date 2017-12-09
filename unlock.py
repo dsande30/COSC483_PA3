@@ -79,14 +79,11 @@ def main():
     if lockIntegrity != "True":
         print("Locking Party's Public Key Was Unverified")
         exit()
-    else:
-        #print("Verified Lock Key Integrity")
     symIntegrity = symVerify(args)
     if symIntegrity != "True":
         print("Symmetric Key Manifest Was Unverified")
         exit()
-    else:
-        #print("Verified Symmetric Key Manifest")
+
     key = readManifest()
     aesKey = decManifest(args, key)
     decDir(args.directory, aesKey)
