@@ -1,5 +1,7 @@
 import argparse
 import subprocess
+import os
+from Crypto.Random import random
 
 def getFlags():
     #parse command line args
@@ -22,8 +24,10 @@ def symVerify(args):
     returnVal = subprocess.check_output([command], shell=True)
     return returnVal.strip()
 
-def encVerify(args):
-
+def encVerify(key, file):
+    command = "python2.7 " + currentdir + "/cbcmac-validate-2.py -k " + str(key) + " -m " + file + " -t " + file + "-tag"
+    result = subprocess.check_output([command], shell=True)
+    return result
 
 def decDir(directory, key):
     currentdir = os.getcwd()
@@ -33,19 +37,23 @@ def decDir(directory, key):
     for i in range(0, len(newlist)):
         if newlist[i] == ' ':
             newlist[i] = "\ "
-    current dir = ''.join(newlist)
+    currentdir = ''.join(newlist)
 
     for root, dirs, files in os.walk(directory):
         os.chdir(directory)
         for file in files:
-            decFile(file, key, currentdir)
+            encIntegrity = encVerify(key, file)
+            if encIntegrity == "True":
+                decFile(file, key, currentdir)
+            else:
+                print("Skipped %s File" % file)
 
 def decFile(file, key, currentdir):
-    command = "python 2.7 " + currentdir + "/cbc-dec.py -k " + str(key) + " -i " + file + " -o " + file
+    command = "python2.7 " + currentdir + "/cbc-dec.py -k " + str(key) + " -i " + file + " -o " + file
     subprocess.call([command], shell=True)
 
 def decManifest(args, key):
-    command = "python2.7 rsa-dec.py -k " + args.pubKeyFile + " -i " + str(key)
+    command = "python2.7 rsa-dec.py -k " + args.privKeyFile + " -i " + str(key)
     result = subprocess.check_output([command], shell=True)
     return result.strip()
 
