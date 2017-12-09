@@ -1,6 +1,7 @@
 import argparse
 import subprocess
 import os
+import sys
 from Crypto.Random import random
 
 def getFlags():
@@ -24,10 +25,11 @@ def symVerify(args):
     returnVal = subprocess.check_output([command], shell=True)
     return returnVal.strip()
 
-def encVerify(key, file):
+def encVerify(key, file, currentdir):
+    file = file[:-4]
     command = "python2.7 " + currentdir + "/cbcmac-validate-2.py -k " + str(key) + " -m " + file + " -t " + file + "-tag"
     result = subprocess.check_output([command], shell=True)
-    return result
+    return result.strip()
 
 def decDir(directory, key):
     currentdir = os.getcwd()
@@ -41,12 +43,20 @@ def decDir(directory, key):
 
     for root, dirs, files in os.walk(directory):
         os.chdir(directory)
+        #tags
         for file in files:
-            encIntegrity = encVerify(key, file)
-            if encIntegrity == "True":
-                decFile(file, key, currentdir)
-            else:
-                print("Skipped %s File" % file)
+            if file[-4:] == "-tag":
+                encIntegrity = encVerify(key, file, currentdir)
+                if encIntegrity != "True":
+                    sys.exit("Bad file detected: %s" % file)
+                os.remove(file)
+
+    os.chdir("..")
+    for root, dirs, files in os.walk(directory):
+        #for files
+        os.chdir(directory)
+        for file in files:
+            decFile(file.strip(), key, currentdir)
 
 def decFile(file, key, currentdir):
     command = "python2.7 " + currentdir + "/cbc-dec.py -k " + str(key) + " -i " + file + " -o " + file
@@ -70,13 +80,13 @@ def main():
         print("Locking Party's Public Key Was Unverified")
         exit()
     else:
-        print("Verified dat lock integrity")
+        #print("Verified Lock Key Integrity")
     symIntegrity = symVerify(args)
     if symIntegrity != "True":
         print("Symmetric Key Manifest Was Unverified")
         exit()
     else:
-        print("Verified sym key manifesto speghettio")
+        #print("Verified Symmetric Key Manifest")
     key = readManifest()
     aesKey = decManifest(args, key)
     decDir(args.directory, aesKey)

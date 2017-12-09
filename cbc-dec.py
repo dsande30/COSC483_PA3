@@ -45,7 +45,6 @@ def main(argv):
     #Takes the IV from the Encryption Part
     key = args.keyfile
     IV = i.readline()
-    print("Iv: %s DONE WITH IV" % IV)
 
     while True:
         string = i.readline()
